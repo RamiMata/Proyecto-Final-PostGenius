@@ -17,7 +17,7 @@ st.write("""
 2. Selecciona la plataforma para la cual deseas generar ideas (Instagram, TikTok, Twitter, YouTube, LinkedIn).
 3. Elige el objetivo de la publicación (engagement, atraer seguidores, generar ventas, educar a la audiencia).
 4. Selecciona el formato de contenido (imagen, carrusel, video, historia, encuesta, reel).
-5. Presiona el botón para generar ideas y obtendrás cinco sugerencias para tus publicaciones.
+5. Presiona el botón para generar ideas y obtendrás tres sugerencias detalladas para tus publicaciones.
 """)
 
 # Inputs del usuario
@@ -28,7 +28,16 @@ formato = st.selectbox("Selecciona el formato de contenido", ["Imagen", "Carruse
 
 # Función para generar ideas
 def generar_ideas(nicho, plataforma, objetivo, formato):
-    prompt = f"Genera cinco ideas de publicaciones para una cuenta de {plataforma} sobre {nicho} cuyo objetivo es {objetivo}. Formato: {formato}."
+    prompt = f"""
+    Genera tres ideas de publicaciones para una cuenta de {plataforma} sobre {nicho}, cuyo objetivo es {objetivo}.
+    Las ideas deben ser detalladas e incluir los siguientes elementos:
+    - Un título llamativo.
+    - Una descripción completa explicando el contenido.
+    - Un llamado a la acción (CTA) para incentivar la interacción del público.
+    - Hashtags sugeridos para mejorar el alcance.
+    
+    Formato: {formato}.
+    """
 
     try:
         response = client.chat.completions.create(
@@ -36,12 +45,12 @@ def generar_ideas(nicho, plataforma, objetivo, formato):
             messages=[
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=500,
+            max_tokens=700,
             temperature=0.7
         )
 
-        ideas = response.choices[0].message.content.strip().split("\n")
-        return ideas
+        ideas = response.choices[0].message.content.strip().split("\n\n")  # Separar ideas por bloques
+        return ideas[:3]  # Tomar solo las primeras 3 ideas
 
     except openai.APIConnectionError:
         st.error("Error de conexión con OpenAI. Verifica tu conexión a Internet.")
@@ -67,4 +76,5 @@ if st.button("Generar Ideas"):
                 st.write(idea)
 
 st.write("© 2025 PostGenius. Todos los derechos reservados.")
+
 
