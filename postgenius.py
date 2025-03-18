@@ -3,8 +3,11 @@ import openai
 import os
 
 # Cargar API Key desde Streamlit Secrets
-
 openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+# Crear el cliente de OpenAI
+client = openai.Client()
+
 st.title("PostGenius - Generador de Ideas para Redes Sociales")
 st.write("Bienvenido a PostGenius, la herramienta que utiliza inteligencia artificial para ayudarte a generar ideas de contenido para tus redes sociales.")
 
@@ -26,25 +29,32 @@ formato = st.selectbox("Selecciona el formato de contenido", ["Imagen", "Carruse
 # Función para generar ideas
 def generar_ideas(nicho, plataforma, objetivo, formato):
     prompt = f"Genera cinco ideas de publicaciones para una cuenta de {plataforma} sobre {nicho} cuyo objetivo es {objetivo}. Formato: {formato}."
+
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "user", "content": prompt}
             ],
             max_tokens=500,
-            n=1,
             temperature=0.7
         )
-        ideas = response.choices[0].message['content'].strip().split('\n')
+
+        ideas = response.choices[0].message.content.strip().split("\n")
         return ideas
-    except openai.error.OpenAIError as e:
-        st.error(f"Error en la API de OpenAI: {e}")
-        return []
+
+    except openai.APIConnectionError:
+        st.error("Error de conexión con OpenAI. Verifica tu conexión a Internet.")
+    except openai.APIError:
+        st.error("Error en la API de OpenAI. Intenta más tarde.")
+    except openai.BadRequestError:
+        st.error("Error en la solicitud. Verifica los datos ingresados.")
     except Exception as e:
         st.error(f"Ocurrió un error inesperado: {e}")
-        return []
 
+    return []
+
+# Botón para generar ideas
 if st.button("Generar Ideas"):
     if not nicho or not plataforma or not objetivo or not formato:
         st.error("Por favor, completa todos los campos.")
@@ -57,3 +67,4 @@ if st.button("Generar Ideas"):
                 st.write(idea)
 
 st.write("© 2025 PostGenius. Todos los derechos reservados.")
+
