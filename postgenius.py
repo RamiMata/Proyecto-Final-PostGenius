@@ -28,6 +28,7 @@ formato = st.selectbox("Selecciona el formato de contenido", ["Imagen", "Carruse
 def generar_ideas(nicho, plataforma, objetivo, formato):
     prompt = f"Genera cinco ideas de publicaciones para una cuenta de {plataforma} sobre {nicho} cuyo objetivo es {objetivo}. Formato: {formato}."
     try: 
+    client = openai.Client()
     response = client.chat.completions.create(
        model="gpt-3.5-turbo",
        messages=[
