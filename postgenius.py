@@ -1,6 +1,7 @@
 import streamlit as st
 import openai
 import os
+from openai import OpenAIError
 
 # Cargar API Key desde Streamlit Secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
