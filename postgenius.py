@@ -75,6 +75,6 @@ if st.button("Generar Ideas"):
                 st.subheader(f"Idea {i}")
                 st.write(idea)
 
-st.write("© 2025 PostGenius. Todos los derechos reservados.")
+st.write("© 2025 PostGenius. Proyecto Final CoderHouse Comisión 71955 Inteligencia Artificial: Prompt Engineering para programadores - Carreras Intensivas, Ramiro Mata.")
 
 
